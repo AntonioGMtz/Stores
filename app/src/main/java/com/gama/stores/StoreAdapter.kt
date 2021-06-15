@@ -1,21 +1,19 @@
 package com.gama.stores
 
 import android.content.Context
-import android.net.sip.SipSession
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.gama.stores.databinding.ItemStoreBinding
 
-class StoreAdapter(private var stores : MutableList<Store>, private var listener : OnClickListener):
+class StoreAdapter(private var stores : MutableList<StoreEntity>, private var listener : OnClickListener):
     RecyclerView.Adapter<StoreAdapter.ViewHolder>() {
 
     private lateinit var mContext : Context
     inner class ViewHolder(view:View) : RecyclerView.ViewHolder(view){
         val binding = ItemStoreBinding.bind(view)
-        fun setListener(store:Store){
+        fun setListener(storeEntity:StoreEntity){
 
         }
     }
@@ -36,9 +34,9 @@ class StoreAdapter(private var stores : MutableList<Store>, private var listener
         }
     }
 
-    fun add(store: Store) {
+    fun add(storeEntity: StoreEntity) {
         //Añadir el dato store
-        stores.add(store)
+        stores.add(storeEntity)
         //refrescar el dato en pantalla
         notifyDataSetChanged()
     }

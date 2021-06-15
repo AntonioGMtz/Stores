@@ -18,11 +18,14 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         setContentView(mBinding.root)
         //Agregar una nueva tienda
         mBinding.btnSave.setOnClickListener{
-            //Variable para guardar los datos
+            var store = StoreEntity(name = mBinding.etName.text.toString().trim()) //Variable para guardar los datos
+
             //Llamada a los datos de la data class
-            var store = Store(name = mBinding.etName.text.toString().trim())
-            //Lllebar los datos en el recyclerview
-            mAdapter.add(store)
+            Thread{  //HILO PARA QUE NO HAGA UN CHOQUE CON LOS PROCESOS
+                StoreApplication.database.storeDao().addStore(store) //AÑADE LOS DATOS A LA BDD
+
+            }.start()
+            mAdapter.add(store)  //Lllebar los datos en el recyclerview
         }
         setupRecyclerView()
 
@@ -39,7 +42,7 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         }
     }
 
-    override fun onClick(store: Store) {
+    override fun onClick(storeEntity: StoreEntity) {
 
     }
 }
