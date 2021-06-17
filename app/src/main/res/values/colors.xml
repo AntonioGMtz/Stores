@@ -10,4 +10,5 @@
 
 
     <color name="color_white_t">#CCFFFFFF</color>
+    <color name="color_link">#0C87E9</color>
 </resources>
