@@ -11,9 +11,23 @@ class StoreAdapter(private var stores : MutableList<StoreEntity>, private var li
     RecyclerView.Adapter<StoreAdapter.ViewHolder>() {
 
     private lateinit var mContext : Context
+
     inner class ViewHolder(view:View) : RecyclerView.ViewHolder(view){
-        val binding = ItemStoreBinding.bind(view)
+        val binding = ItemStoreBinding.bind(view)   //Val que nos bindeamo en lugar de usar R.findviid
+
         fun setListener(storeEntity:StoreEntity){
+            with(binding.root){  //Agrupa los binding en UNO solo
+                setOnClickListener{  //Un clic nos lleva al detalle de la tienda
+                    listener.onClick(storeEntity)
+                }
+                setOnLongClickListener{ //un clid largo nos eliminara la tienda
+                    listener.onDeleteStore(storeEntity) //debemos regresar un booleano
+                    true
+                }
+            }
+            binding.cbFavorite.setOnClickListener{
+                listener.onFavoriteStore(storeEntity)
+            }
 
         }
     }
@@ -30,7 +44,10 @@ class StoreAdapter(private var stores : MutableList<StoreEntity>, private var li
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val store = stores.get(position)
         with(holder){
+            //Bindeando los campos de la app
+            setListener(store)
             binding.tvName.text = store.name
+            binding.cbFavorite.isChecked=store.isFavorite
         }
     }
 
@@ -39,5 +56,33 @@ class StoreAdapter(private var stores : MutableList<StoreEntity>, private var li
         stores.add(storeEntity)
         //refrescar el dato en pantalla
         notifyDataSetChanged()
+    }
+
+    fun setStore(stores: MutableList<StoreEntity>) {
+        this.stores = stores
+        notifyDataSetChanged()
+
+    }
+    //metodo para actualizar el estado de la tienda
+    fun update(storeEntity: StoreEntity) {
+
+        //saber el indice en el cual esta la tienda
+        val index= stores.indexOf(storeEntity)
+        if(index !=-1){
+            stores.set(index,storeEntity)
+            //solamente refresca el registro afectado
+            notifyItemChanged(index)
+        }
+    }
+    fun delete(storeEntity: StoreEntity) {
+
+        //saber el indice en el cual esta la tienda
+        val index= stores.indexOf(storeEntity)
+        if(index !=-1){
+            //Removemos la tienda
+            stores.removeAt(index)
+            //refresaca la vista con el elemento eliminado
+            notifyItemRemoved(index)
+        }
     }
 }
