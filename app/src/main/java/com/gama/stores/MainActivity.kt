@@ -2,6 +2,8 @@ package com.gama.stores
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.gama.stores.databinding.ActivityMainBinding
 import org.jetbrains.anko.doAsync
@@ -19,17 +21,23 @@ class MainActivity : AppCompatActivity(), OnClickListener {
          mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
         //Agregar una nueva tienda
-        mBinding.btnSave.setOnClickListener{
-            var store = StoreEntity(name = mBinding.etName.text.toString().trim()) //Variable para guardar los datos
 
-            //Llamada a los datos de la data class
-            Thread{  //HILO PARA QUE NO HAGA UN CHOQUE CON LOS PROCESOS
-                StoreApplication.database.storeDao().addStore(store) //AÑADE LOS DATOS A LA BDD
-
-            }.start()
-            mAdapter.add(store)  //Lllebar los datos en el recyclerview
+        mBinding.fab.setOnClickListener{
+            launchEditFragment()
         }
+
         setupRecyclerView()
+
+    }
+
+    private fun launchEditFragment() { //SINTAXIS BASICA PARA INICIAR UN FRAGMENT
+       val fragment = EditStoreFragment() //Instanciamos el Fragment
+        val fragmentManager = supportFragmentManager //Gestor para controlar los fragmentos
+        val fragmentTransaction = fragmentManager.beginTransaction() //Dcide como ejecutar el fragment
+        fragmentTransaction.add(R.id.containerMain,fragment) //LLAMA AL AFRAGMENT
+        fragmentTransaction.commit()//Inicia el fragment
+        fragmentTransaction.addToBackStack(null)
+        mBinding.fab.hide()
 
     }
 
