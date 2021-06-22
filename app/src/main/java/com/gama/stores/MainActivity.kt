@@ -10,7 +10,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 //Implementar interfaz y metodos
-class MainActivity : AppCompatActivity(), OnClickListener {
+class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     //varabiles locales
     private lateinit var mBinding: ActivityMainBinding
     private lateinit var mAdapter : StoreAdapter
@@ -37,7 +37,8 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         fragmentTransaction.add(R.id.containerMain,fragment) //LLAMA AL AFRAGMENT
         fragmentTransaction.commit()//Inicia el fragment
         fragmentTransaction.addToBackStack(null)
-        mBinding.fab.hide()
+        //Si es true muestra el boton flotante si no lo esconde
+        hideFab()
 
     }
 
@@ -89,5 +90,10 @@ class MainActivity : AppCompatActivity(), OnClickListener {
         }
 
 
+    }
+
+    override fun hideFab(isVisible: Boolean) {
+        //Si es true muestra el boton flotante si no lo esconde
+        if(isVisible) mBinding.fab.show() else mBinding.fab.hide()
     }
 }
