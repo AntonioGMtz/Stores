@@ -96,4 +96,12 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
         //Si es true muestra el boton flotante si no lo esconde
         if(isVisible) mBinding.fab.show() else mBinding.fab.hide()
     }
+
+    override fun addStore(storeEntity: StoreEntity) {
+        mAdapter.add(storeEntity)
+    }
+
+    override fun updateStore(storeEntity: StoreEntity) {
+
+    }
 }

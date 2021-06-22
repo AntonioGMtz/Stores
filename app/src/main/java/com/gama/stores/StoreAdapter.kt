@@ -52,10 +52,12 @@ class StoreAdapter(private var stores : MutableList<StoreEntity>, private var li
     }
 
     fun add(storeEntity: StoreEntity) {
-        //Añadir el dato store
-        stores.add(storeEntity)
-        //refrescar el dato en pantalla
-        notifyDataSetChanged()
+        if(!stores.contains(storeEntity)){
+            stores.add(storeEntity) //Añadir el dato store
+            //refrescar el dato en pantalla
+            notifyItemChanged(stores.size-1)
+        }
+
     }
 
     fun setStore(stores: MutableList<StoreEntity>) {

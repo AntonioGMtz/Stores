@@ -4,7 +4,11 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.gama.stores.databinding.FragmentEditStoreBinding
 import com.google.android.material.snackbar.Snackbar
 import org.jetbrains.anko.doAsync
@@ -35,6 +39,15 @@ class EditStoreFragment : Fragment() {
 
         //Tenga accseo al menus
         setHasOptionsMenu(true)
+
+        //Cargamos la imagen con ayuda de la libreria GLIDE
+        mBinding.etPhotoUrl.addTextChangedListener {
+            Glide.with(this)
+                .load(mBinding.etPhotoUrl.text.toString())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .into(mBinding.imgPhoto)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -57,14 +70,17 @@ class EditStoreFragment : Fragment() {
                 phone = mBinding.etPhone.text.toString().trim(),
                 websiste = mBinding.etWebSite.text.toString().trim())
                 doAsync {
-                    StoreApplication.database.storeDao().addStore(store)
+                    //Genera el id de la tienda
+                   store.id = StoreApplication.database.storeDao().addStore(store)
                     uiThread {
+                        mActivity?.addStore(store)
                         hideKeyboard()
                         //Creacion de mensaje en patanlla como el TOAST
-                        Snackbar.make(mBinding.root,
+                       /* Snackbar.make(mBinding.root,
                                 getString(R.string.edit_store_message_save_succes),
-                                Snackbar.LENGTH_LONG).show()
-                        mActivity?.onBackPressed()
+                                Snackbar.LENGTH_LONG).show()*/
+                        Toast.makeText(mActivity,R.string.edit_store_message_save_succes,Toast.LENGTH_LONG).show()
+                        mActivity?.onBackPressed()       //Castea la MainActivity y el metodo ObackPresed retorna a ella
                     }
                 }
 
