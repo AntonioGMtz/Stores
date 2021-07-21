@@ -2,6 +2,7 @@ package com.gama.stores
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -75,17 +76,20 @@ class EditStoreFragment : Fragment() {
     //funcion que trae la tienda y escribe los valores en ella
     private fun setUiStore(storeEntity: StoreEntity) {
         with(mBinding){
-            etName.setText(storeEntity.name)
-            etPhone.setText(storeEntity.phone)
-            etPhotoUrl.setText(storeEntity.photoUrl)
-            etWebSite.setText(storeEntity.websiste)
-            Glide.with(activity!!)
+            etName.text = storeEntity.name.editable()
+            etPhone.text = storeEntity.phone.editable()
+            etPhotoUrl.text = storeEntity.photoUrl.editable()
+            etWebSite.text = storeEntity.websiste.editable()
+          /*  Glide.with(activity!!)
                 .load(storeEntity.photoUrl)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
-                .into(imgPhoto)
+                .into(imgPhoto)*/
         }
     }
+    //Funcion EXTENSION para poder pasar Strings en campos de texto
+    private fun String.editable() : Editable = Editable.Factory.getInstance().newEditable(this)
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         //Inflamos la vista del menu para verla en pantalla
