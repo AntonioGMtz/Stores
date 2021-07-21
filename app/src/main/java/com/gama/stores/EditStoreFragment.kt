@@ -20,6 +20,11 @@ class EditStoreFragment : Fragment() {
     //Creamos una variable global para el casteo de MAINactivity
     private var mActivity:MainActivity? = null
 
+    private var mstoreEntity : StoreEntity? = null
+
+    //Variable para comprobar que el ID este lleno
+    private var misEditMode: Boolean = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         //Bindeamos el fragment para presentarlo en patalla
@@ -29,6 +34,14 @@ class EditStoreFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val id = arguments?.getLong(getString(R.string.arg_id),0)
+        if(id != null && id != 0L){
+            misEditMode = true
+            getStore(id)
+        }else{
+            Toast.makeText(activity,id.toString(), Toast.LENGTH_LONG).show()
+        }
 
         //Hacer un casteo del MAIN ACTIVITY
         mActivity = activity as? MainActivity?
@@ -47,6 +60,30 @@ class EditStoreFragment : Fragment() {
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .centerCrop()
                 .into(mBinding.imgPhoto)
+        }
+    }
+    //funcion para llenar los campos con los datos de BDD traidos por el id
+    private fun getStore(id: Long) {
+        doAsync {
+            mstoreEntity = StoreApplication.database.storeDao().getStoreById(id) //Creamos la consulta
+            uiThread {
+                if(mstoreEntity != null) setUiStore(mstoreEntity!!)
+            }
+        }
+    }
+
+    //funcion que trae la tienda y escribe los valores en ella
+    private fun setUiStore(storeEntity: StoreEntity) {
+        with(mBinding){
+            etName.setText(storeEntity.name)
+            etPhone.setText(storeEntity.phone)
+            etPhotoUrl.setText(storeEntity.photoUrl)
+            etWebSite.setText(storeEntity.websiste)
+            Glide.with(activity!!)
+                .load(storeEntity.photoUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .centerCrop()
+                .into(imgPhoto)
         }
     }
 
@@ -68,7 +105,8 @@ class EditStoreFragment : Fragment() {
             R.id.action_save->{
                 val store = StoreEntity(name = mBinding.etName.text.toString().trim(),
                 phone = mBinding.etPhone.text.toString().trim(),
-                websiste = mBinding.etWebSite.text.toString().trim())
+                websiste = mBinding.etWebSite.text.toString().trim(),
+                photoUrl = mBinding.etPhotoUrl.text.toString().trim())
                 doAsync {
                     //Genera el id de la tienda
                    store.id = StoreApplication.database.storeDao().addStore(store)

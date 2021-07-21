@@ -30,8 +30,9 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
 
     }
 
-    private fun launchEditFragment() { //SINTAXIS BASICA PARA INICIAR UN FRAGMENT
+    private fun launchEditFragment(args : Bundle? = null) { //SINTAXIS BASICA PARA INICIAR UN FRAGMENT
        val fragment = EditStoreFragment() //Instanciamos el Fragment
+        if(args != null) fragment.arguments = args
         val fragmentManager = supportFragmentManager //Gestor para controlar los fragmentos
         val fragmentTransaction = fragmentManager.beginTransaction() //Dcide como ejecutar el fragment
         fragmentTransaction.add(R.id.containerMain,fragment) //LLAMA AL AFRAGMENT
@@ -54,8 +55,10 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
         }
     }
 
-    override fun onClick(storeEntity: StoreEntity) {
-
+    override fun onClick(storeId: Long) {
+        val args  = Bundle()
+        args.putLong(getString(R.string.arg_id), storeId)
+        launchEditFragment(args)
     }
 
     override fun onFavoriteStore(storeEntity: StoreEntity) {

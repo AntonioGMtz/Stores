@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.gama.stores.databinding.ItemStoreBinding
 
 class StoreAdapter(private var stores : MutableList<StoreEntity>, private var listener : OnClickListener):
@@ -18,7 +20,7 @@ class StoreAdapter(private var stores : MutableList<StoreEntity>, private var li
         fun setListener(storeEntity:StoreEntity){
             with(binding.root){  //Agrupa los binding en UNO solo
                 setOnClickListener{  //Un clic nos lleva al detalle de la tienda
-                    listener.onClick(storeEntity)
+                    listener.onClick(storeEntity.id)
                 }
                 setOnLongClickListener{ //un clid largo nos eliminara la tienda
                     listener.onDeleteStore(storeEntity) //debemos regresar un booleano
@@ -48,6 +50,12 @@ class StoreAdapter(private var stores : MutableList<StoreEntity>, private var li
             setListener(store)
             binding.tvName.text = store.name
             binding.cbFavorite.isChecked=store.isFavorite
+            //Se agrega la foto a la pantalla principal de recicler view
+            Glide.with(mContext)
+                    .load(store.photoUrl) //Carga la imagen desde la url de la BDD  de room
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop()
+                    .into(binding.imgPhoto)
         }
     }
 
