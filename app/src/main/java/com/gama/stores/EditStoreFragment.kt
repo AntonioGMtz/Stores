@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.gama.stores.databinding.FragmentEditStoreBinding
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -41,7 +42,8 @@ class EditStoreFragment : Fragment() {
             misEditMode = true
             getStore(id)
         }else{
-            Toast.makeText(activity,id.toString(), Toast.LENGTH_LONG).show()
+            misEditMode = false
+            mstoreEntity = StoreEntity(name = "", phone = "", photoUrl = "")
         }
 
         //Hacer un casteo del MAIN ACTIVITY
@@ -53,16 +55,29 @@ class EditStoreFragment : Fragment() {
 
         //Tenga accseo al menus
         setHasOptionsMenu(true)
+        setUpTextFields()
+    }
 
+    private fun setUpTextFields() {
         //Cargamos la imagen con ayuda de la libreria GLIDE
-        mBinding.etPhotoUrl.addTextChangedListener {
-            Glide.with(this)
-                .load(mBinding.etPhotoUrl.text.toString())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .centerCrop()
-                .into(mBinding.imgPhoto)
+        with(mBinding){
+            //Revisar en tiempo real los TEXTFIELDS
+            etName.addTextChangedListener{ validateFields(tilName) }
+            etPhone.addTextChangedListener{ validateFields(tilPhone) }
+            etPhotoUrl.addTextChangedListener{
+                validateFields(tilPhotoUrl)
+                loadImage(it.toString().trim())
+            }
         }
     }
+    private fun loadImage(url : String){
+        Glide.with(this)
+            .load(url)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .centerCrop()
+            .into(mBinding.imgPhoto)
+    }
+
     //funcion para llenar los campos con los datos de BDD traidos por el id
     private fun getStore(id: Long) {
         doAsync {
@@ -107,30 +122,90 @@ class EditStoreFragment : Fragment() {
             }
             //Opcion del guardado de datos
             R.id.action_save->{
-                val store = StoreEntity(name = mBinding.etName.text.toString().trim(),
-                phone = mBinding.etPhone.text.toString().trim(),
-                websiste = mBinding.etWebSite.text.toString().trim(),
-                photoUrl = mBinding.etPhotoUrl.text.toString().trim())
-                doAsync {
-                    //Genera el id de la tienda
-                   store.id = StoreApplication.database.storeDao().addStore(store)
-                    uiThread {
-                        mActivity?.addStore(store)
-                        hideKeyboard()
-                        //Creacion de mensaje en patanlla como el TOAST
-                       /* Snackbar.make(mBinding.root,
-                                getString(R.string.edit_store_message_save_succes),
-                                Snackbar.LENGTH_LONG).show()*/
-                        Toast.makeText(mActivity,R.string.edit_store_message_save_succes,Toast.LENGTH_LONG).show()
-                        mActivity?.onBackPressed()       //Castea la MainActivity y el metodo ObackPresed retorna a ella
+                if(mstoreEntity != null && validateFields(mBinding.tilName,mBinding.tilPhone,mBinding.tilPhotoUrl)){
+                    /* val store = StoreEntity(name = mBinding.etName.text.toString().trim(),
+               phone = mBinding.etPhone.text.toString().trim(),
+               websiste = mBinding.etWebSite.text.toString().trim(),
+               photoUrl = mBinding.etPhotoUrl.text.toString().trim())*/
+                    with(mstoreEntity!!){
+                        name = mBinding.etName.text.toString().trim()
+                        phone = mBinding.etPhone.text.toString().trim()
+                        websiste = mBinding.etWebSite.text.toString().trim()
+                        photoUrl = mBinding.etPhotoUrl.text.toString().trim()
                     }
-                }
+                    doAsync {
 
+                        if(misEditMode) StoreApplication.database.storeDao().updateStore(mstoreEntity!!)
+                        else mstoreEntity!!.id = StoreApplication.database.storeDao().addStore(mstoreEntity!!)
+                        uiThread {
+
+                            hideKeyboard()
+
+                            if(misEditMode){
+                               mActivity?.updateStore(mstoreEntity!!)
+                               Snackbar.make(mBinding.root,
+                               R.string.edit_store_message_update_store,
+                               Snackbar.LENGTH_LONG).show()
+
+                           }
+                            else{
+                               mActivity?.addStore(mstoreEntity!!)
+                              //hideKeyboard()
+                               //Creacion de mensaje en patanlla como el TOAST
+                               /* Snackbar.make(mBinding.root,
+                                        getString(R.string.edit_store_message_save_succes),
+                                        Snackbar.LENGTH_LONG).show()*/
+                               Toast.makeText(mActivity,R.string.edit_store_message_save_succes,Toast.LENGTH_LONG).show()
+                               mActivity?.onBackPressed()       //Castea la MainActivity y el metodo ObackPresed retorna a ella
+
+                           }
+                           }
+                    }
+
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    //Validando multiples TEXFIELDS a traves de varios argumentos
+    private fun validateFields(vararg textFields : TextInputLayout) : Boolean{
+        var isValid = true
+        for(textField in textFields){
+            if(textField.editText?.text.toString().trim().isEmpty()){
+                textField.error = getString(R.string.helper_required)
+                isValid = false
+            }else textField.error = null
+        }
+        if(!isValid) Snackbar.make(mBinding.root,
+            R.string.edit_store_message_valid,
+            Snackbar.LENGTH_SHORT).show()
+        return isValid
+
+    }
+  /*  private fun validateFields(): Boolean {
+        var isValid = true
+
+        if(mBinding.etName.text.toString().trim().isEmpty()){
+            mBinding.tilName.error = getString(R.string.helper_required)
+            mBinding.etName.requestFocus()
+            isValid = false
+        }
+        if(mBinding.etPhone.text.toString().trim().isEmpty()){
+            mBinding.tilPhone.error = getString(R.string.helper_required)
+            mBinding.etPhone.requestFocus()
+            isValid = false
+        }
+        if(mBinding.etPhotoUrl.text.toString().trim().isEmpty()){
+            mBinding.tilPhotoUrl.error  = getString(R.string.helper_required)
+            mBinding.etPhotoUrl.requestFocus()
+            isValid = false
+        }
+        return isValid
+
+    }*/
+
     //METODO PARA OCULTAR EL TECLADO
     fun hideKeyboard(){
         //Constante que

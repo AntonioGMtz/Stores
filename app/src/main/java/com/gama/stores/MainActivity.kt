@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
         mBinding.recyclerView.apply {
             setHasFixedSize(true)
             layoutManager = mGridLayout
+
             adapter = mAdapter
 
         }
@@ -105,6 +106,6 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     }
 
     override fun updateStore(storeEntity: StoreEntity) {
-
+        mAdapter.update(storeEntity)
     }
 }
