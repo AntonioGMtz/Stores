@@ -1,11 +1,14 @@
 package com.gama.stores
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.gama.stores.databinding.ActivityMainBinding
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -69,19 +72,71 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
             //Llamada a la base de datos
             StoreApplication.database.storeDao().updateStore(storeEntity)
             uiThread {
-                mAdapter.update(storeEntity)
+                updateStore(storeEntity)
             }
         }
     }
 
     override fun onDeleteStore(storeEntity: StoreEntity) {
-        doAsync {
-            StoreApplication.database.storeDao().deleteStore(storeEntity)
-            uiThread {
-                mAdapter.delete(storeEntity)
+        //*ALERT de multiples opciones
+       val items = resources.getStringArray(R.array.array_options_item)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.dialog_options_title)
+            .setItems(items) { dialogInterface, i ->
+                when (i) {
+                    0 -> confirmDelete(storeEntity)
+
+                    1 -> dial(storeEntity.phone)
+
+                    2 -> goToWebSite(storeEntity.websiste)
+                }
             }
+            .show()
+
+    }
+    private fun confirmDelete(storeEntity: StoreEntity){
+        //      **AlertDialog para confirmacion de elimancion**
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.dialog_delete_title)
+            .setPositiveButton(R.string.dialog_delete_confirm) { dialogInterface, i ->
+                doAsync {
+                    StoreApplication.database.storeDao().deleteStore(storeEntity)
+                    uiThread {
+                        mAdapter.delete(storeEntity)
+                    }
+                }
+            }
+            .setNegativeButton(R.string.dialog_delete_cancel,null)
+            .show()
+    }
+    private fun dial(phone : String){
+        //*Ir a la patanlla de marcacion del telefono 
+        val callIntent = Intent().apply {
+            action = Intent.ACTION_DIAL
+            data = Uri.parse("tel:$phone")
+        }
+        startIntent(callIntent)
+    }
+
+    private fun goToWebSite(website : String){
+        if(website.isEmpty()){
+            Toast.makeText(this,R.string.main_error_no_website, Toast.LENGTH_LONG).show()
+        }else {
+            //Abrir la patanalla del navegador en la ruta estabnlecida en la tienda previamente
+            val webIntent = Intent().apply {
+                action = Intent.ACTION_DIAL
+                data = Uri.parse(website)
+            }
+            startIntent(webIntent)
         }
     }
+
+    private fun startIntent(intent : Intent){
+        if(intent.resolveActivity(packageManager) != null) startActivity(intent)
+        else Toast.makeText(this, "No se pudo encontrar uhna aplicacion para ejecutar la accion",
+            Toast.LENGTH_LONG).show()
+    }
+
 
     private fun setStores(){
         doAsync {
