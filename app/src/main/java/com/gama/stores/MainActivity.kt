@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
 
     private fun startIntent(intent : Intent){
         if(intent.resolveActivity(packageManager) != null) startActivity(intent)
-        else Toast.makeText(this, "No se pudo encontrar uhna aplicacion para ejecutar la accion",
+        else Toast.makeText(this, R.string.object_not_found,
             Toast.LENGTH_LONG).show()
     }
 

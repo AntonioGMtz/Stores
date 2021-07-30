@@ -1,24 +1,26 @@
 <resources>
-    <string name="app_name">Tiendas</string>
-    <string name="description_img_photo">Imagen de la tienda</string>
-    <string name="description_store_add">Crear Tienda</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="hint_name">Nombre de la tienda</string>
-    <string name="helper_required">Requerido</string>
-    <string name="hint_phone">Telefono</string>
-    <string name="hint_web">Sitio Web</string>
-    <string name="hint_photo_url">Url de la imagen</string>
-    <string name="edit_store_tittle_add">Crear Tienda</string>
+    <string name="app_name">Stores</string>
+    <string name="description_img_photo">Store Image</string>
+    <string name="description_store_add">Create Store</string>
+    <string name="hint_name">Name Store</string>
+    <string name="helper_required">Required</string>
+    <string name="hint_phone">Phone</string>
+    <string name="hint_web">WebSiteb</string>
+    <string name="hint_photo_url">Picture Url</string>
+    <string name="edit_store_tittle_add">Create Store</string>
     <string name="menu_save">Save</string>
-    <string name="edit_store_message_save_succes">Tienda agregada correctamente</string>
-    <string name="arg_id">key_id</string>
-    <string name="edit_store_message_update_store">Tienda actualizada</string>
-    <string name="edit_store_message_valid">Agregar Campo(s) Faltantes</string>
-    <string name="edit_store_tittle_visualizar">Editar Tienda</string>
-    <string name="dialog_delete_title">¿Eliminar Tienda?</string>
-    <string name="dialog_delete_confirm">Eliminar</string>
-    <string name="dialog_delete_cancel">Cancelar</string>
-    <string name="dialog_options_title">¿Que desea hacer?</string>
-    <string name="main_error_no_website">Esta tienda no tiene un sitio web establecido</string>
+    <string name="edit_store_message_save_succes">The store was added succesfully</string>
+    <string name="arg_id" translatable="false">key_id</string>
+    <string name="edit_store_message_update_store">The store was update</string>
+    <string name="edit_store_message_valid">Is necesssary to add some spaces</string>
+    <string name="edit_store_tittle_visualizar">Edit Store</string>
+    <string name="dialog_delete_title">¿Delete Store?</string>
+    <string name="dialog_delete_confirm">Delete</string>
+    <string name="dialog_delete_cancel">Cancel</string>
+    <string name="dialog_options_title">What would you like to do?</string>
+    <string name="main_error_no_website">This Store doesnt have a website</string>
+    <string name="delete_array">Delete</string>
+    <string name="llamar_array">Call</string>
+    <string name="go_to_website_array">Go to Website</string>
+    <string name="object_not_found">I can´t do this action</string>
 </resources>
