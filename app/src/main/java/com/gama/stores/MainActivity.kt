@@ -2,10 +2,9 @@ package com.gama.stores
 
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.gama.stores.databinding.ActivityMainBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -47,8 +46,9 @@ class MainActivity : AppCompatActivity(), OnClickListener, MainAux {
     }
 
     private fun setupRecyclerView() {
+
         mAdapter = StoreAdapter(mutableListOf(),this)
-        mGridLayout = GridLayoutManager(this,2)
+        mGridLayout = GridLayoutManager(this,resources.getInteger(R.integer.main_columns))
         setStores()
         mBinding.recyclerView.apply {
             setHasFixedSize(true)
